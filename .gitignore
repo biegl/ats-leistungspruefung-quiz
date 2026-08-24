@@ -1,2 +1,9 @@
 # Source document of the LFV Tirol – not published, see README
 Richtlinien ATS-Leistungsprüfung Stufe 1_2021.pdf
+
+# Working documents kept locally: full transcript of the guideline,
+# design spec and implementation plan
+docs/
+
+# Scratch workspace of the implementation session
+.superpowers/
