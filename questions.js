@@ -81,7 +81,7 @@ export const QUESTIONS = [
     answers: [
       "Am schnellen, flachen Atemrhythmus.",
       "Am ruhigen Aus- und Einatmen.",
-      "Am hörbaren Ansprechen des Lungenautomaten bei jedem Atemzug.",
+      "Am lauten Ansprechen des Lungenautomaten.",
     ],
     correct: 1,
   },
@@ -90,8 +90,8 @@ export const QUESTIONS = [
       "Welche Folgen ergeben sich aus der Störung der Atmung?",
     answers: [
       "Lebensgefahr.",
-      "Nur harmlose Kopfschmerzen.",
-      "Nur kurzzeitig verminderte Leistung.",
+      "Nur Kopfschmerzen.",
+      "Nur Müdigkeit.",
     ],
     correct: 0,
   },
@@ -159,8 +159,8 @@ export const QUESTIONS = [
     question:
       "Wo darf man Filtergeräte nicht verwenden?",
     answers: [
-      "Nur bei akutem Sauerstoffmangel im gesamten Einsatzraum sind Filtergeräte grundsätzlich verboten, in allen übrigen Einsatzlagen bleiben sie uneingeschränkt zulässig.",
-      "Nur bei Bränden im Freien besteht ein generelles Verwendungsverbot für Filtergeräte, in geschlossenen Räumen gelten sie hingegen als unbedenklich.",
+      "Nur bei akutem Sauerstoffmangel im gesamten Einsatzraum sind Filtergeräte grundsätzlich verboten, in allen übrigen Einsatzlagen bleiben sie uneingeschränkt zulässig, auch bei hohen Schadstoffkonzentrationen.",
+      "Nur bei Bränden im Freien besteht ein generelles Verwendungsverbot für Filtergeräte, in geschlossenen Räumen und bei jedem Sauerstoffmangel gelten sie hingegen weiterhin als unbedenklich und ausreichend.",
       "Bei Bränden in geschlossenen Räumen (CO); bei Sauerstoffmangel (mind. 17 Vol.-% Sauerstoff, bei CO-Filtern mind. 19 Vol.-% erforderlich); bei Umgebungsverhältnissen, wo der Anteil der Atemgifte in der Einatemluft die Filterwirkung überschreitet.",
     ],
     correct: 2,
@@ -200,8 +200,8 @@ export const QUESTIONS = [
       "Dürfen Atemluftflaschen vollkommen entleert werden?",
     answers: [
       "Nein.",
-      "Ja, sofern sie unmittelbar danach wieder befüllt werden.",
-      "Ja, ein Restdruck ist nur bei Composite-Flaschen erforderlich.",
+      "Ja, danach befüllt.",
+      "Ja, im Notfall.",
     ],
     correct: 0,
   },
@@ -209,9 +209,9 @@ export const QUESTIONS = [
     question:
       "Wie erfolgt die Berechnung des Rückzugzeitpunktes mittels Manometer?",
     answers: [
-      "Für den Rückweg ist dieselbe Luftmenge wie für den Hinweg einzuplanen.",
+      "Für den Rückweg ist dieselbe Luftmenge wie für den Hinweg einzuplanen (z. B. Abmarsch bei 210 bar, Verbrauch beim Anmarsch 40 bar → Rückmarsch bei 40 bar, also 40 bar × 1).",
       "Für den Rückweg ist die doppelte Luftmenge der beim Hinweg verbrauchten Atemluft einzuplanen (z. B. Abmarsch bei 210 bar, Verbrauch beim Anmarsch 40 bar → Rückmarsch bei 80 bar, also 40 bar × 2).",
-      "Für den Rückweg ist die halbe Luftmenge des Hinweges einzuplanen.",
+      "Für den Rückweg ist die halbe Luftmenge des Hinweges einzuplanen (z. B. Abmarsch bei 210 bar, Verbrauch beim Anmarsch 40 bar → Rückmarsch bei 20 bar, also 40 bar ÷ 2).",
     ],
     correct: 1,
   },
@@ -239,9 +239,9 @@ export const QUESTIONS = [
     question:
       "Darf mit einem Pressluftatmer getaucht werden?",
     answers: [
-      "Ja, bis zu einer Wassertiefe von drei Metern.",
+      "Ja, bis 3 m.",
       "Nein.",
-      "Ja, sofern eine Überdruckmaske verwendet wird.",
+      "Ja, mit Überdruckmaske.",
     ],
     correct: 1,
   },
@@ -289,8 +289,8 @@ export const QUESTIONS = [
     question:
       "Schützen Filtergeräte gegen Sauerstoffmangel?",
     answers: [
-      "Ja, der Filter reichert die Atemluft mit Sauerstoff an.",
-      "Ja, sofern noch mindestens 15 Vol.-% Sauerstoff vorhanden sind.",
+      "Ja, ab 15 %.",
+      "Ja, mit Sauerstoffzusatz.",
       "Nein.",
     ],
     correct: 2,
