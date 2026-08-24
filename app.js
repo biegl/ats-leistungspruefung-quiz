@@ -271,3 +271,25 @@ function zeichneErgebnis() {
     }),
   )
 }
+
+function resetFragen() {
+  el.resetDialog.hidden = false
+  el.resetJa.focus()
+}
+
+function resetSchliessen() {
+  el.resetDialog.hidden = true
+  el.reset.focus()
+}
+
+el.reset.addEventListener("click", resetFragen)
+el.resetNein.addEventListener("click", resetSchliessen)
+el.resetJa.addEventListener("click", () => {
+  el.resetDialog.hidden = true
+  starten()
+})
+
+// Escape schließt die Rückfrage, ohne den Durchgang zu verwerfen.
+document.addEventListener("keydown", (ereignis) => {
+  if (ereignis.key === "Escape" && !el.resetDialog.hidden) resetSchliessen()
+})
