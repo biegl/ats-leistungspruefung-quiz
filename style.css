@@ -40,7 +40,7 @@
     --text-stark: #F2F6F5;
     --text-leise: #8D9A9B;
     --linie:      #26312F;
-    --akzent:     #E4443A;
+    --akzent:     #D63A30;
     --akzent-auf: #FFFFFF;
     --akzent-flaeche: #23191B;
     --gut:        #5CD096;
@@ -110,7 +110,7 @@ body {
   font: inherit; font-family: var(--schrift-kopf); font-size: 0.72rem;
   letter-spacing: 0.06em; color: var(--text-leise); background: none;
   border: 1px solid var(--linie); border-radius: var(--radius-klein);
-  padding: 0.4rem 0.65rem; cursor: pointer; min-height: 2rem;
+  padding: 0.4rem 0.65rem; cursor: pointer; min-height: 2.75rem;
 }
 .kopf-reset:hover { color: var(--text-stark); border-color: var(--text-leise); }
 
@@ -144,7 +144,7 @@ h1:focus-visible, h2:focus-visible { outline: 2px solid var(--akzent); outline-o
 }
 .fakten b {
   font-family: var(--schrift-zahl); font-variant-numeric: tabular-nums;
-  font-size: 1.15rem; font-weight: 700; color: var(--akzent);
+  font-size: 1.2rem; font-weight: 700; color: var(--akzent);
 }
 .fakten span { color: var(--text-leise); font-size: 0.9rem; }
 
@@ -159,7 +159,7 @@ h1:focus-visible, h2:focus-visible { outline: 2px solid var(--akzent); outline-o
 }
 .btn:disabled { background: var(--still-bg); color: var(--still-text); border-color: var(--linie); box-shadow: none; cursor: not-allowed; }
 .btn:focus-visible { outline: 3px solid var(--text-stark); outline-offset: 2px; }
-.btn--klein { margin-top: 0; padding: 0.6rem 0.9rem; font-size: 0.8rem; min-height: 2.5rem; }
+.btn--klein { margin-top: 0; padding: 0.6rem 0.9rem; font-size: 0.8rem; min-height: 2.75rem; }
 .btn--still { background: var(--still-bg); color: var(--text); border-color: var(--linie); box-shadow: none; }
 
 /* Frage */
