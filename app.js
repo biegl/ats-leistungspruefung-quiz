@@ -62,6 +62,7 @@ function starten() {
     fertig: false,
   }
   speichern()
+  warnungAngesagt = false
   zeichnen()
 }
 
@@ -82,6 +83,9 @@ function zeichnen() {
   }
   el.timer.hidden = name !== "frage"
 
+  if (name === "frage") starteTicker()
+  else stoppeTicker()
+
   if (name === "frage") zeichneFrage()
   if (name === "ergebnis") zeichneErgebnis()
 }
@@ -89,6 +93,56 @@ function zeichnen() {
 el.startBtn.addEventListener("click", starten)
 el.weiterBtn.addEventListener("click", weiter)
 el.neustartBtn.addEventListener("click", starten)
+
+const WARNSCHWELLE_MS = 60 * 1000
+let warnungAngesagt = false
+let tickerId = null
+
+function tick() {
+  if (!zustand || zustand.fertig) {
+    stoppeTicker()
+    return
+  }
+
+  const rest = restzeitMs(zustand.ende, Date.now())
+  el.timer.textContent = formatZeit(rest)
+
+  const knapp = rest <= WARNSCHWELLE_MS
+  el.timer.classList.toggle("knapp", knapp)
+
+  // Einmalige Ansage statt sekündlichem Vorlesen.
+  if (knapp && !warnungAngesagt) {
+    warnungAngesagt = true
+    el.ansage.textContent = "Noch eine Minute Bearbeitungszeit."
+  }
+
+  if (rest === 0) {
+    stoppeTicker()
+    zustand.fertig = true
+    speichern()
+    el.ansage.textContent = "Die Zeit ist abgelaufen. Das Ergebnis wird angezeigt."
+    zeichnen()
+  }
+}
+
+function starteTicker() {
+  stoppeTicker()
+  tick()
+  tickerId = setInterval(tick, 1000)
+}
+
+function stoppeTicker() {
+  if (tickerId !== null) {
+    clearInterval(tickerId)
+    tickerId = null
+  }
+}
+
+// Hintergrund-Tabs drosseln setInterval. Beim Zurückkehren sofort nachziehen,
+// statt bis zum nächsten Tick eine veraltete Zeit zu zeigen.
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && aktuellerScreen() === "frage") tick()
+})
 
 zeichnen()
 
