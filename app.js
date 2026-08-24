@@ -87,11 +87,82 @@ function zeichnen() {
 }
 
 el.startBtn.addEventListener("click", starten)
+el.weiterBtn.addEventListener("click", weiter)
+el.neustartBtn.addEventListener("click", starten)
 
 zeichnen()
 
+const BUCHSTABEN = ["A", "B", "C"]
+
 function zeichneFrage() {
-  el.frageText.textContent = FRAGEN[zustand.fragen[zustand.aktuell]].frage
+  const i = zustand.aktuell
+  const frage = FRAGEN[zustand.fragen[i]]
+  const reihenfolge = zustand.optionen[i]
+
+  el.fortschritt.textContent = `Frage ${i + 1} von ${zustand.fragen.length}`
+  el.quelle.textContent = `Nr. ${zustand.fragen[i] + 1}`
+  el.frageText.textContent = frage.frage
+  el.frageTitel.textContent = `Frage ${i + 1} von ${zustand.fragen.length}`
+
+  el.punkte.replaceChildren(
+    ...zustand.fragen.map((_, k) => {
+      const punkt = document.createElement("i")
+      if (k < i) punkt.className = "erledigt"
+      if (k === i) punkt.className = "jetzt"
+      return punkt
+    }),
+  )
+
+  el.optionen.replaceChildren(
+    ...reihenfolge.map((originalIndex, position) => {
+      const li = document.createElement("li")
+      const label = document.createElement("label")
+
+      const input = document.createElement("input")
+      input.type = "radio"
+      input.name = `frage-${i}`
+      input.value = String(position)
+      input.checked = zustand.antworten[i] === position
+      input.addEventListener("change", () => waehlen(position))
+
+      const marke = document.createElement("span")
+      marke.className = "marke"
+      marke.textContent = BUCHSTABEN[position]
+
+      const text = document.createElement("span")
+      text.className = "text"
+      text.textContent = frage.antworten[originalIndex]
+
+      label.append(input, marke, text)
+      li.append(label)
+      return li
+    }),
+  )
+
+  const letzte = i === zustand.fragen.length - 1
+  el.weiterBtn.textContent = letzte ? "Auswerten" : "Weiter"
+  el.weiterBtn.disabled = zustand.antworten[i] === null
+}
+
+/**
+ * Die Auswahl wird sofort gespeichert, nicht erst beim Weiter-Klick — läuft die
+ * Zeit ab, während eine Antwort markiert, aber unbestätigt ist, zählt sie trotzdem.
+ */
+function waehlen(position) {
+  zustand.antworten[zustand.aktuell] = position
+  speichern()
+  el.weiterBtn.disabled = false
+}
+
+function weiter() {
+  if (zustand.antworten[zustand.aktuell] === null) return
+  if (zustand.aktuell === zustand.fragen.length - 1) {
+    zustand.fertig = true
+  } else {
+    zustand.aktuell++
+  }
+  speichern()
+  zeichnen()
 }
 
 function zeichneErgebnis() {
