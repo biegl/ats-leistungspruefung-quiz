@@ -2,6 +2,7 @@ import { FRAGEN } from "./fragen.js"
 import { neuerDurchgang, DAUER_MS, auswerten, istRichtig, restzeitMs, formatZeit } from "./quiz.js"
 
 const SPEICHER = "ats-quiz"
+const BUCHSTABEN = ["A", "B", "C"]
 
 const el = {
   timer: document.getElementById("timer"),
@@ -154,8 +155,6 @@ document.addEventListener("visibilitychange", () => {
 })
 
 zeichnen()
-
-const BUCHSTABEN = ["A", "B", "C"]
 
 function zeichneFrage() {
   const i = zustand.aktuell
