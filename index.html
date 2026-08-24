@@ -9,64 +9,64 @@
 </head>
 <body>
 
-<header class="kopf">
-  <span class="kopf-marke">ATS Bronze</span>
-  <span class="kopf-timer" id="timer" hidden>10:00</span>
-  <button class="kopf-reset" id="reset" type="button">Neu starten</button>
+<header class="header">
+  <span class="header-brand">ATS Bronze</span>
+  <span class="header-timer" id="timer" hidden>10:00</span>
+  <button class="header-reset" id="reset" type="button">Neu starten</button>
 </header>
 
 <div class="reset-dialog" id="reset-dialog" role="alertdialog"
-     aria-labelledby="reset-dialog-titel" hidden>
-  <p id="reset-dialog-titel">Quiz wirklich neu starten? Fortschritt und Zeit gehen verloren.</p>
-  <div class="reset-dialog-aktionen">
-    <button type="button" id="reset-ja" class="btn btn--klein">Ja, neu starten</button>
-    <button type="button" id="reset-nein" class="btn btn--klein btn--still">Abbrechen</button>
+     aria-labelledby="reset-dialog-title" hidden>
+  <p id="reset-dialog-title">Quiz wirklich neu starten? Fortschritt und Zeit gehen verloren.</p>
+  <div class="reset-dialog-actions">
+    <button type="button" id="reset-yes" class="btn btn--small">Ja, neu starten</button>
+    <button type="button" id="reset-no" class="btn btn--small btn--quiet">Abbrechen</button>
   </div>
 </div>
 
-<main class="buehne">
+<main class="stage">
 
   <section class="screen" id="screen-start">
     <h1 tabindex="-1">Theoretische Prüfung</h1>
     <p class="lede">Station 1 der Atemschutz-Leistungsprüfung, Stufe I Bronze.</p>
-    <ul class="fakten">
+    <ul class="facts">
       <li><b>10</b><span>Fragen, zufällig aus 30 gezogen</span></li>
       <li><b>10</b><span>Minuten Bearbeitungszeit</span></li>
       <li><b>6</b><span>richtige Antworten zum Bestehen</span></li>
     </ul>
-    <p class="hinweis">Es kann nicht zurückgeblättert werden. Läuft die Zeit ab, wird
+    <p class="note">Es kann nicht zurückgeblättert werden. Läuft die Zeit ab, wird
       automatisch ausgewertet.</p>
     <button class="btn" id="start-btn" type="button">Quiz starten</button>
   </section>
 
-  <section class="screen" id="screen-frage" hidden>
-    <h2 class="visuell-versteckt" id="frage-titel" tabindex="-1">Frage</h2>
-    <div class="frage-meta">
-      <span id="frage-fortschritt">Frage 1 von 10</span>
-      <span id="frage-quelle"></span>
+  <section class="screen" id="screen-question" hidden>
+    <h2 class="visually-hidden" id="question-title" tabindex="-1">Frage</h2>
+    <div class="question-meta">
+      <span id="question-progress">Frage 1 von 10</span>
+      <span id="question-source"></span>
     </div>
-    <div class="fortschritt" id="frage-punkte" aria-hidden="true"></div>
-    <fieldset class="frage-block">
-      <legend id="frage-text">&nbsp;</legend>
-      <ul class="optionen" id="optionen"></ul>
+    <div class="progress" id="question-dots" aria-hidden="true"></div>
+    <fieldset class="question-block">
+      <legend id="question-text">&nbsp;</legend>
+      <ul class="options" id="options"></ul>
     </fieldset>
-    <button class="btn" id="weiter-btn" type="button" disabled>Weiter</button>
+    <button class="btn" id="next-btn" type="button" disabled>Weiter</button>
   </section>
 
-  <section class="screen" id="screen-ergebnis" hidden>
-    <h2 tabindex="-1" class="visuell-versteckt">Ergebnis</h2>
-    <span class="badge" id="ergebnis-badge"></span>
-    <p class="score" id="ergebnis-score"></p>
-    <p class="hinweis">Mindestens 6 richtige Antworten waren gefordert.</p>
-    <ul class="aufloesung" id="ergebnis-liste"></ul>
-    <button class="btn" id="neustart-btn" type="button">Neuen Durchgang starten</button>
+  <section class="screen" id="screen-result" hidden>
+    <h2 tabindex="-1" class="visually-hidden">Ergebnis</h2>
+    <span class="badge" id="result-badge"></span>
+    <p class="score" id="result-score"></p>
+    <p class="note">Mindestens 6 richtige Antworten waren gefordert.</p>
+    <ul class="breakdown" id="result-list"></ul>
+    <button class="btn" id="restart-btn" type="button">Neuen Durchgang starten</button>
   </section>
 
 </main>
 
-<p class="ansage visuell-versteckt" id="ansage" role="status" aria-live="polite"></p>
+<p class="announce visually-hidden" id="announce" role="status" aria-live="polite"></p>
 
-<footer class="fuss">
+<footer class="footer">
   <p>Fragen aus der Durchführungsrichtlinie „Atemschutz Leistungsprüfung Stufe I – Bronze“,
      Landes-Feuerwehrverband Tirol, Ausgabe 2021. Übungshilfe ohne amtlichen Charakter.</p>
 </footer>

@@ -1,134 +1,134 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { FRAGEN } from "./fragen.js"
+import { QUESTIONS } from "./questions.js"
 
-test("Katalog enthält genau 30 Fragen", () => {
-  assert.equal(FRAGEN.length, 30)
+test("catalog contains exactly 30 questions", () => {
+  assert.equal(QUESTIONS.length, 30)
 })
 
-test("jede Frage hat genau 3 nicht-leere Antworten", () => {
-  for (const [i, f] of FRAGEN.entries()) {
-    assert.equal(f.antworten.length, 3, `Frage ${i + 1} hat nicht 3 Antworten`)
-    for (const a of f.antworten) {
-      assert.ok(a.trim().length > 0, `Frage ${i + 1} hat eine leere Antwort`)
+test("every question has exactly 3 non-empty answers", () => {
+  for (const [i, q] of QUESTIONS.entries()) {
+    assert.equal(q.answers.length, 3, `Question ${i + 1} does not have 3 answers`)
+    for (const a of q.answers) {
+      assert.ok(a.trim().length > 0, `Question ${i + 1} has an empty answer`)
     }
   }
 })
 
-test("richtig zeigt bei jeder Frage auf 0, 1 oder 2", () => {
-  for (const [i, f] of FRAGEN.entries()) {
+test("correct points to 0, 1 or 2 for every question", () => {
+  for (const [i, q] of QUESTIONS.entries()) {
     assert.ok(
-      Number.isInteger(f.richtig) && f.richtig >= 0 && f.richtig <= 2,
-      `Frage ${i + 1} hat richtig=${f.richtig}`,
+      Number.isInteger(q.correct) && q.correct >= 0 && q.correct <= 2,
+      `Question ${i + 1} has correct=${q.correct}`,
     )
   }
 })
 
-test("innerhalb einer Frage ist keine Antwort doppelt", () => {
-  for (const [i, f] of FRAGEN.entries()) {
-    const eindeutig = new Set(f.antworten.map((a) => a.trim().toLowerCase()))
-    assert.equal(eindeutig.size, 3, `Frage ${i + 1} hat doppelte Antworten`)
+test("no answer is duplicated within a question", () => {
+  for (const [i, q] of QUESTIONS.entries()) {
+    const unique = new Set(q.answers.map((a) => a.trim().toLowerCase()))
+    assert.equal(unique.size, 3, `Question ${i + 1} has duplicate answers`)
   }
 })
 
-test("jede Frage hat einen nicht-leeren Fragetext", () => {
-  for (const [i, f] of FRAGEN.entries()) {
-    assert.ok(f.frage.trim().length > 0, `Frage ${i + 1} hat keinen Text`)
+test("every question has a non-empty question text", () => {
+  for (const [i, q] of QUESTIONS.entries()) {
+    assert.ok(q.question.trim().length > 0, `Question ${i + 1} has no text`)
   }
 })
-import { mischen, neuerDurchgang } from "./quiz.js"
+import { shuffle, newRound } from "./quiz.js"
 
-test("mischen liefert eine Permutation und lässt das Original unberührt", () => {
+test("shuffle returns a permutation and leaves the original untouched", () => {
   const original = [0, 1, 2, 3, 4]
-  const kopie = [...original]
-  const gemischt = mischen(original)
-  assert.deepEqual(original, kopie, "Original wurde verändert")
-  assert.deepEqual([...gemischt].sort((a, b) => a - b), kopie)
+  const copy = [...original]
+  const shuffled = shuffle(original)
+  assert.deepEqual(original, copy, "original was mutated")
+  assert.deepEqual([...shuffled].sort((a, b) => a - b), copy)
 })
 
-test("neuerDurchgang zieht 10 verschiedene Fragen aus dem Pool", () => {
+test("newRound draws 10 distinct questions from the pool", () => {
   for (let i = 0; i < 200; i++) {
-    const { fragen } = neuerDurchgang()
-    assert.equal(fragen.length, 10)
-    assert.equal(new Set(fragen).size, 10, "eine Frage kam doppelt vor")
-    for (const f of fragen) {
-      assert.ok(f >= 0 && f < 30, `Index ${f} liegt außerhalb des Pools`)
+    const { questions } = newRound()
+    assert.equal(questions.length, 10)
+    assert.equal(new Set(questions).size, 10, "a question came up twice")
+    for (const q of questions) {
+      assert.ok(q >= 0 && q < 30, `Index ${q} is outside the pool`)
     }
   }
 })
 
-test("über viele Durchgänge wird jede der 30 Fragen einmal gezogen", () => {
-  const gesehen = new Set()
+test("across many rounds, every one of the 30 questions is drawn at least once", () => {
+  const seen = new Set()
   for (let i = 0; i < 500; i++) {
-    for (const f of neuerDurchgang().fragen) gesehen.add(f)
+    for (const q of newRound().questions) seen.add(q)
   }
-  assert.equal(gesehen.size, 30, "der Shuffle erreicht nicht alle Fragen")
+  assert.equal(seen.size, 30, "the shuffle does not reach every question")
 })
 
-test("optionen ist je Frage eine echte Permutation von 0,1,2", () => {
-  const { optionen } = neuerDurchgang()
-  assert.equal(optionen.length, 10)
-  for (const o of optionen) {
+test("options is a true permutation of 0,1,2 for every question", () => {
+  const { options } = newRound()
+  assert.equal(options.length, 10)
+  for (const o of options) {
     assert.deepEqual([...o].sort(), [0, 1, 2])
   }
 })
-import { istRichtig, auswerten, restzeitMs, formatZeit } from "./quiz.js"
+import { isCorrect, evaluate, remainingMs, formatTime } from "./quiz.js"
 
-const KATALOG = [
-  { frage: "F1", antworten: ["a", "b", "c"], richtig: 0 },
-  { frage: "F2", antworten: ["a", "b", "c"], richtig: 2 },
+const CATALOG = [
+  { question: "Q1", answers: ["a", "b", "c"], correct: 0 },
+  { question: "Q2", answers: ["a", "b", "c"], correct: 2 },
 ]
 
-test("istRichtig erkennt die richtige Antwort an jeder Anzeigeposition", () => {
-  const frage = KATALOG[0] // richtig ist Original-Index 0
-  // Original-Index 0 steht an Anzeigeposition 2:
-  assert.equal(istRichtig(frage, [1, 2, 0], 2), true)
-  assert.equal(istRichtig(frage, [1, 2, 0], 0), false)
-  // Original-Index 0 steht an Anzeigeposition 0:
-  assert.equal(istRichtig(frage, [0, 1, 2], 0), true)
-  // Original-Index 0 steht an Anzeigeposition 1:
-  assert.equal(istRichtig(frage, [2, 0, 1], 1), true)
+test("isCorrect recognizes the correct answer at every display position", () => {
+  const question = CATALOG[0] // correct is original index 0
+  // Original index 0 sits at display position 2:
+  assert.equal(isCorrect(question, [1, 2, 0], 2), true)
+  assert.equal(isCorrect(question, [1, 2, 0], 0), false)
+  // Original index 0 sits at display position 0:
+  assert.equal(isCorrect(question, [0, 1, 2], 0), true)
+  // Original index 0 sits at display position 1:
+  assert.equal(isCorrect(question, [2, 0, 1], 1), true)
 })
 
-test("istRichtig wertet eine unbeantwortete Frage als falsch", () => {
-  assert.equal(istRichtig(KATALOG[0], [0, 1, 2], null), false)
+test("isCorrect scores an unanswered question as wrong", () => {
+  assert.equal(isCorrect(CATALOG[0], [0, 1, 2], null), false)
 })
 
-test("auswerten zählt richtige Antworten über die Mischung hinweg", () => {
-  const zustand = {
-    fragen: [0, 1],
-    optionen: [[2, 0, 1], [0, 1, 2]],
-    antworten: [1, 2], // Frage 1: Position 1 -> Original 0 -> richtig
-  }                    // Frage 2: Position 2 -> Original 2 -> richtig
-  const e = auswerten(zustand, KATALOG)
-  assert.equal(e.richtig, 2)
-  assert.equal(e.gesamt, 2)
+test("evaluate counts correct answers across the shuffle", () => {
+  const state = {
+    questions: [0, 1],
+    options: [[2, 0, 1], [0, 1, 2]],
+    answers: [1, 2], // question 1: position 1 -> original 0 -> correct
+  }                   // question 2: position 2 -> original 2 -> correct
+  const e = evaluate(state, CATALOG)
+  assert.equal(e.correct, 2)
+  assert.equal(e.total, 2)
 })
 
-test("auswerten zählt null als falsch", () => {
-  const zustand = { fragen: [0, 1], optionen: [[0, 1, 2], [0, 1, 2]], antworten: [0, null] }
-  assert.equal(auswerten(zustand, KATALOG).richtig, 1)
+test("evaluate counts null as wrong", () => {
+  const state = { questions: [0, 1], options: [[0, 1, 2], [0, 1, 2]], answers: [0, null] }
+  assert.equal(evaluate(state, CATALOG).correct, 1)
 })
 
-test("bestanden kippt genau bei 6 von 10", () => {
-  const bau = (n) => ({
-    fragen: Array.from({ length: 10 }, () => 0),
-    optionen: Array.from({ length: 10 }, () => [0, 1, 2]),
-    antworten: Array.from({ length: 10 }, (_, i) => (i < n ? 0 : 1)),
+test("passed flips exactly at 6 out of 10", () => {
+  const build = (n) => ({
+    questions: Array.from({ length: 10 }, () => 0),
+    options: Array.from({ length: 10 }, () => [0, 1, 2]),
+    answers: Array.from({ length: 10 }, (_, i) => (i < n ? 0 : 1)),
   })
-  assert.equal(auswerten(bau(5), KATALOG).bestanden, false)
-  assert.equal(auswerten(bau(6), KATALOG).bestanden, true)
-  assert.equal(auswerten(bau(7), KATALOG).bestanden, true)
+  assert.equal(evaluate(build(5), CATALOG).passed, false)
+  assert.equal(evaluate(build(6), CATALOG).passed, true)
+  assert.equal(evaluate(build(7), CATALOG).passed, true)
 })
 
-test("restzeitMs wird nie negativ", () => {
-  assert.equal(restzeitMs(1000, 5000), 0)
-  assert.equal(restzeitMs(5000, 1000), 4000)
+test("remainingMs is never negative", () => {
+  assert.equal(remainingMs(1000, 5000), 0)
+  assert.equal(remainingMs(5000, 1000), 4000)
 })
 
-test("formatZeit setzt MM:SS mit führender Null und rundet auf", () => {
-  assert.equal(formatZeit(600000), "10:00")
-  assert.equal(formatZeit(43000), "00:43")
-  assert.equal(formatZeit(0), "00:00")
-  assert.equal(formatZeit(59400), "01:00") // angebrochene Sekunde zählt voll
+test("formatTime produces MM:SS with a leading zero and rounds up", () => {
+  assert.equal(formatTime(600000), "10:00")
+  assert.equal(formatTime(43000), "00:43")
+  assert.equal(formatTime(0), "00:00")
+  assert.equal(formatTime(59400), "01:00") // a partial second counts in full
 })

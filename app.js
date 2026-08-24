@@ -1,303 +1,303 @@
-import { FRAGEN } from "./fragen.js"
-import { neuerDurchgang, DAUER_MS, auswerten, istRichtig, restzeitMs, formatZeit } from "./quiz.js"
+import { QUESTIONS } from "./questions.js"
+import { newRound, DURATION_MS, evaluate, isCorrect, remainingMs, formatTime } from "./quiz.js"
 
-const SPEICHER = "ats-quiz"
-const BUCHSTABEN = ["A", "B", "C"]
+const STORAGE_KEY = "ats-quiz"
+const LETTERS = ["A", "B", "C"]
 
 const el = {
   timer: document.getElementById("timer"),
   reset: document.getElementById("reset"),
   resetDialog: document.getElementById("reset-dialog"),
-  resetJa: document.getElementById("reset-ja"),
-  resetNein: document.getElementById("reset-nein"),
-  ansage: document.getElementById("ansage"),
+  resetYes: document.getElementById("reset-yes"),
+  resetNo: document.getElementById("reset-no"),
+  announce: document.getElementById("announce"),
   screens: {
     start: document.getElementById("screen-start"),
-    frage: document.getElementById("screen-frage"),
-    ergebnis: document.getElementById("screen-ergebnis"),
+    question: document.getElementById("screen-question"),
+    result: document.getElementById("screen-result"),
   },
   startBtn: document.getElementById("start-btn"),
-  frageTitel: document.getElementById("frage-titel"),
-  fortschritt: document.getElementById("frage-fortschritt"),
-  punkte: document.getElementById("frage-punkte"),
-  quelle: document.getElementById("frage-quelle"),
-  frageText: document.getElementById("frage-text"),
-  optionen: document.getElementById("optionen"),
-  weiterBtn: document.getElementById("weiter-btn"),
-  badge: document.getElementById("ergebnis-badge"),
-  score: document.getElementById("ergebnis-score"),
-  liste: document.getElementById("ergebnis-liste"),
-  neustartBtn: document.getElementById("neustart-btn"),
+  questionTitle: document.getElementById("question-title"),
+  progress: document.getElementById("question-progress"),
+  dots: document.getElementById("question-dots"),
+  source: document.getElementById("question-source"),
+  questionText: document.getElementById("question-text"),
+  options: document.getElementById("options"),
+  nextBtn: document.getElementById("next-btn"),
+  badge: document.getElementById("result-badge"),
+  score: document.getElementById("result-score"),
+  list: document.getElementById("result-list"),
+  restartBtn: document.getElementById("restart-btn"),
 }
 
-let zustand = laden()
+let state = load()
 
-function laden() {
+function load() {
   try {
-    const roh = sessionStorage.getItem(SPEICHER)
-    return roh ? JSON.parse(roh) : null
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : null
   } catch {
-    // Privater Modus oder blockierter Speicher: der Durchgang überlebt dann
-    // keinen Reload, das Quiz funktioniert aber weiterhin.
+    // Private mode or blocked storage: the round then won't survive a
+    // reload, but the quiz keeps working.
     return null
   }
 }
 
-function speichern() {
+function save() {
   try {
-    if (zustand) sessionStorage.setItem(SPEICHER, JSON.stringify(zustand))
-    else sessionStorage.removeItem(SPEICHER)
+    if (state) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    else sessionStorage.removeItem(STORAGE_KEY)
   } catch {
-    /* siehe laden(): Speichern ist eine Annehmlichkeit, keine Bedingung. */
+    /* see load(): saving is a convenience, not a requirement. */
   }
 }
 
-function starten() {
-  const { fragen, optionen } = neuerDurchgang(FRAGEN.length)
-  zustand = {
-    fragen,
-    optionen,
-    antworten: Array(fragen.length).fill(null),
-    aktuell: 0,
-    ende: Date.now() + DAUER_MS,
-    fertig: false,
+function start() {
+  const { questions, options } = newRound(QUESTIONS.length)
+  state = {
+    questions,
+    options,
+    answers: Array(questions.length).fill(null),
+    current: 0,
+    endsAt: Date.now() + DURATION_MS,
+    finished: false,
   }
-  speichern()
-  warnungAngesagt = false
-  zeichnen()
+  save()
+  warningAnnounced = false
+  render()
 }
 
-function abgelaufen() {
-  return zustand !== null && restzeitMs(zustand.ende, Date.now()) === 0
+function isExpired() {
+  return state !== null && remainingMs(state.endsAt, Date.now()) === 0
 }
 
-function aktuellerScreen() {
-  if (!zustand) return "start"
-  if (zustand.fertig || abgelaufen()) return "ergebnis"
-  return "frage"
+function currentScreen() {
+  if (!state) return "start"
+  if (state.finished || isExpired()) return "result"
+  return "question"
 }
 
-function zeichnen() {
-  const name = aktuellerScreen()
-  for (const [schluessel, knoten] of Object.entries(el.screens)) {
-    knoten.hidden = schluessel !== name
+function render() {
+  const name = currentScreen()
+  for (const [key, node] of Object.entries(el.screens)) {
+    node.hidden = key !== name
   }
-  el.timer.hidden = name !== "frage"
+  el.timer.hidden = name !== "question"
 
-  if (name === "frage") starteTicker()
-  else stoppeTicker()
+  if (name === "question") startTicker()
+  else stopTicker()
 
-  if (name === "frage") zeichneFrage()
-  if (name === "ergebnis") zeichneErgebnis()
+  if (name === "question") renderQuestion()
+  if (name === "result") renderResult()
 
-  // Nur beim tatsächlichen Wechsel fokussieren — sonst reißt jeder Timer-Tick
-  // den Fokus aus den Antwortoptionen.
-  if (name !== zuletztGezeichnet) {
-    zuletztGezeichnet = name
-    const ueberschrift = el.screens[name].querySelector("h1, h2")
-    if (ueberschrift) ueberschrift.focus()
+  // Only focus on an actual screen change — otherwise every timer tick would
+  // rip focus out of the answer options.
+  if (name !== lastRendered) {
+    lastRendered = name
+    const heading = el.screens[name].querySelector("h1, h2")
+    if (heading) heading.focus()
   }
 }
 
-el.startBtn.addEventListener("click", starten)
-el.weiterBtn.addEventListener("click", weiter)
-el.neustartBtn.addEventListener("click", starten)
+el.startBtn.addEventListener("click", start)
+el.nextBtn.addEventListener("click", next)
+el.restartBtn.addEventListener("click", start)
 
-const WARNSCHWELLE_MS = 60 * 1000
-let warnungAngesagt = false
+const WARN_THRESHOLD_MS = 60 * 1000
+let warningAnnounced = false
 let tickerId = null
-let zuletztGezeichnet = null
+let lastRendered = null
 
 function tick() {
-  if (!zustand || zustand.fertig) {
-    stoppeTicker()
+  if (!state || state.finished) {
+    stopTicker()
     return
   }
 
-  const rest = restzeitMs(zustand.ende, Date.now())
-  el.timer.textContent = formatZeit(rest)
+  const remaining = remainingMs(state.endsAt, Date.now())
+  el.timer.textContent = formatTime(remaining)
 
-  const knapp = rest <= WARNSCHWELLE_MS
-  el.timer.classList.toggle("knapp", knapp)
+  const warn = remaining <= WARN_THRESHOLD_MS
+  el.timer.classList.toggle("warn", warn)
 
-  // Einmalige Ansage statt sekündlichem Vorlesen.
-  if (knapp && !warnungAngesagt) {
-    warnungAngesagt = true
-    el.ansage.textContent = "Noch eine Minute Bearbeitungszeit."
+  // Announce once instead of reading it out every second.
+  if (warn && !warningAnnounced) {
+    warningAnnounced = true
+    el.announce.textContent = "Noch eine Minute Bearbeitungszeit."
   }
 
-  if (rest === 0) {
-    stoppeTicker()
-    zustand.fertig = true
-    speichern()
-    el.ansage.textContent = "Die Zeit ist abgelaufen. Das Ergebnis wird angezeigt."
-    zeichnen()
+  if (remaining === 0) {
+    stopTicker()
+    state.finished = true
+    save()
+    el.announce.textContent = "Die Zeit ist abgelaufen. Das Ergebnis wird angezeigt."
+    render()
   }
 }
 
-function starteTicker() {
-  stoppeTicker()
+function startTicker() {
+  stopTicker()
   tick()
   tickerId = setInterval(tick, 1000)
 }
 
-function stoppeTicker() {
+function stopTicker() {
   if (tickerId !== null) {
     clearInterval(tickerId)
     tickerId = null
   }
 }
 
-// Hintergrund-Tabs drosseln setInterval. Beim Zurückkehren sofort nachziehen,
-// statt bis zum nächsten Tick eine veraltete Zeit zu zeigen.
+// Background tabs throttle setInterval. Catch up immediately on return
+// instead of showing a stale time until the next tick.
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && aktuellerScreen() === "frage") tick()
+  if (!document.hidden && currentScreen() === "question") tick()
 })
 
-zeichnen()
+render()
 
-function zeichneFrage() {
-  const i = zustand.aktuell
-  const frage = FRAGEN[zustand.fragen[i]]
-  const reihenfolge = zustand.optionen[i]
+function renderQuestion() {
+  const i = state.current
+  const question = QUESTIONS[state.questions[i]]
+  const order = state.options[i]
 
-  el.fortschritt.textContent = `Frage ${i + 1} von ${zustand.fragen.length}`
-  el.quelle.textContent = `Nr. ${zustand.fragen[i] + 1}`
-  el.frageText.textContent = frage.frage
-  el.frageTitel.textContent = `Frage ${i + 1} von ${zustand.fragen.length}`
+  el.progress.textContent = `Frage ${i + 1} von ${state.questions.length}`
+  el.source.textContent = `Nr. ${state.questions[i] + 1}`
+  el.questionText.textContent = question.question
+  el.questionTitle.textContent = `Frage ${i + 1} von ${state.questions.length}`
 
-  el.punkte.replaceChildren(
-    ...zustand.fragen.map((_, k) => {
-      const punkt = document.createElement("i")
-      if (k < i) punkt.className = "erledigt"
-      if (k === i) punkt.className = "jetzt"
-      return punkt
+  el.dots.replaceChildren(
+    ...state.questions.map((_, k) => {
+      const dot = document.createElement("i")
+      if (k < i) dot.className = "done"
+      if (k === i) dot.className = "current"
+      return dot
     }),
   )
 
-  el.optionen.replaceChildren(
-    ...reihenfolge.map((originalIndex, position) => {
+  el.options.replaceChildren(
+    ...order.map((originalIndex, position) => {
       const li = document.createElement("li")
       const label = document.createElement("label")
 
       const input = document.createElement("input")
       input.type = "radio"
-      input.name = `frage-${i}`
+      input.name = `question-${i}`
       input.value = String(position)
-      input.checked = zustand.antworten[i] === position
-      input.addEventListener("change", () => waehlen(position))
+      input.checked = state.answers[i] === position
+      input.addEventListener("change", () => select(position))
 
-      const marke = document.createElement("span")
-      marke.className = "marke"
-      marke.textContent = BUCHSTABEN[position]
+      const letter = document.createElement("span")
+      letter.className = "letter"
+      letter.textContent = LETTERS[position]
 
       const text = document.createElement("span")
       text.className = "text"
-      text.textContent = frage.antworten[originalIndex]
+      text.textContent = question.answers[originalIndex]
 
-      label.append(input, marke, text)
+      label.append(input, letter, text)
       li.append(label)
       return li
     }),
   )
 
-  const letzte = i === zustand.fragen.length - 1
-  el.weiterBtn.textContent = letzte ? "Auswerten" : "Weiter"
-  el.weiterBtn.disabled = zustand.antworten[i] === null
+  const isLast = i === state.questions.length - 1
+  el.nextBtn.textContent = isLast ? "Auswerten" : "Weiter"
+  el.nextBtn.disabled = state.answers[i] === null
 }
 
 /**
- * Die Auswahl wird sofort gespeichert, nicht erst beim Weiter-Klick — läuft die
- * Zeit ab, während eine Antwort markiert, aber unbestätigt ist, zählt sie trotzdem.
+ * The selection is saved immediately, not only on the Next click — if time
+ * runs out while an answer is marked but unconfirmed, it still counts.
  */
-function waehlen(position) {
-  zustand.antworten[zustand.aktuell] = position
-  speichern()
-  el.weiterBtn.disabled = false
+function select(position) {
+  state.answers[state.current] = position
+  save()
+  el.nextBtn.disabled = false
 }
 
-function weiter() {
-  if (zustand.antworten[zustand.aktuell] === null) return
-  if (zustand.aktuell === zustand.fragen.length - 1) {
-    zustand.fertig = true
+function next() {
+  if (state.answers[state.current] === null) return
+  if (state.current === state.questions.length - 1) {
+    state.finished = true
   } else {
-    zustand.aktuell++
+    state.current++
   }
-  speichern()
-  zeichnen()
+  save()
+  render()
 }
 
-function zeichneErgebnis() {
-  const e = auswerten(zustand, FRAGEN)
+function renderResult() {
+  const e = evaluate(state, QUESTIONS)
 
-  el.badge.textContent = e.bestanden ? "Bestanden" : "Nicht bestanden"
-  el.badge.classList.toggle("durchgefallen", !e.bestanden)
+  el.badge.textContent = e.passed ? "Bestanden" : "Nicht bestanden"
+  el.badge.classList.toggle("failed", !e.passed)
 
   el.score.replaceChildren()
-  const zahl = document.createElement("b")
-  zahl.textContent = String(e.richtig)
-  el.score.append(zahl, ` von ${e.gesamt} richtig`)
+  const count = document.createElement("b")
+  count.textContent = String(e.correct)
+  el.score.append(count, ` von ${e.total} richtig`)
 
-  el.liste.replaceChildren(
-    ...zustand.fragen.map((frageIndex, i) => {
-      const frage = FRAGEN[frageIndex]
-      const reihenfolge = zustand.optionen[i]
-      const gewaehlt = zustand.antworten[i]
-      const korrekt = istRichtig(frage, reihenfolge, gewaehlt)
+  el.list.replaceChildren(
+    ...state.questions.map((questionIndex, i) => {
+      const question = QUESTIONS[questionIndex]
+      const order = state.options[i]
+      const selected = state.answers[i]
+      const correct = isCorrect(question, order, selected)
 
       const li = document.createElement("li")
-      li.className = korrekt ? "richtig" : "falsch"
+      li.className = correct ? "correct" : "incorrect"
 
       const marker = document.createElement("span")
       marker.className = "marker"
-      // Zustand nie allein über Farbe — der Text trägt die Aussage mit.
-      marker.textContent = `${korrekt ? "Richtig" : "Falsch"} · Nr. ${frageIndex + 1}`
+      // Never convey state through color alone — the text carries it too.
+      marker.textContent = `${correct ? "Richtig" : "Falsch"} · Nr. ${questionIndex + 1}`
 
       const text = document.createElement("span")
-      text.className = "frage"
-      text.textContent = frage.frage
+      text.className = "question"
+      text.textContent = question.question
 
-      const antwort = document.createElement("span")
-      antwort.className = "antwort"
+      const answer = document.createElement("span")
+      answer.className = "answer"
 
-      if (gewaehlt === null) {
-        antwort.append("Nicht beantwortet. ")
-      } else if (!korrekt) {
-        antwort.append(`Gewählt: ${frage.antworten[reihenfolge[gewaehlt]]}. `)
+      if (selected === null) {
+        answer.append("Nicht beantwortet. ")
+      } else if (!correct) {
+        answer.append(`Gewählt: ${question.answers[order[selected]]}. `)
       }
 
-      if (korrekt) {
-        antwort.append(frage.antworten[frage.richtig])
+      if (correct) {
+        answer.append(question.answers[question.correct])
       } else {
-        const richtigeAntwort = document.createElement("b")
-        richtigeAntwort.textContent = `Richtig: ${frage.antworten[frage.richtig]}`
-        antwort.append(richtigeAntwort)
+        const correctAnswer = document.createElement("b")
+        correctAnswer.textContent = `Richtig: ${question.answers[question.correct]}`
+        answer.append(correctAnswer)
       }
 
-      li.append(marker, text, antwort)
+      li.append(marker, text, answer)
       return li
     }),
   )
 }
 
-function resetFragen() {
+function openResetDialog() {
   el.resetDialog.hidden = false
-  el.resetJa.focus()
+  el.resetYes.focus()
 }
 
-function resetSchliessen() {
+function closeResetDialog() {
   el.resetDialog.hidden = true
   el.reset.focus()
 }
 
-el.reset.addEventListener("click", resetFragen)
-el.resetNein.addEventListener("click", resetSchliessen)
-el.resetJa.addEventListener("click", () => {
+el.reset.addEventListener("click", openResetDialog)
+el.resetNo.addEventListener("click", closeResetDialog)
+el.resetYes.addEventListener("click", () => {
   el.resetDialog.hidden = true
-  starten()
+  start()
 })
 
-// Escape schließt die Rückfrage, ohne den Durchgang zu verwerfen.
-document.addEventListener("keydown", (ereignis) => {
-  if (ereignis.key === "Escape" && !el.resetDialog.hidden) resetSchliessen()
+// Escape closes the confirmation dialog without discarding the round.
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !el.resetDialog.hidden) closeResetDialog()
 })
