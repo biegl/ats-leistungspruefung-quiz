@@ -1,5 +1,5 @@
 import { FRAGEN } from "./fragen.js"
-import { neuerDurchgang, DAUER_MS, auswerten, restzeitMs, formatZeit } from "./quiz.js"
+import { neuerDurchgang, DAUER_MS, auswerten, istRichtig, restzeitMs, formatZeit } from "./quiz.js"
 
 const SPEICHER = "ats-quiz"
 
@@ -221,5 +221,53 @@ function weiter() {
 
 function zeichneErgebnis() {
   const e = auswerten(zustand, FRAGEN)
-  el.score.textContent = `${e.richtig} von ${e.gesamt} richtig`
+
+  el.badge.textContent = e.bestanden ? "Bestanden" : "Nicht bestanden"
+  el.badge.classList.toggle("durchgefallen", !e.bestanden)
+
+  el.score.replaceChildren()
+  const zahl = document.createElement("b")
+  zahl.textContent = String(e.richtig)
+  el.score.append(zahl, ` von ${e.gesamt} richtig`)
+
+  el.liste.replaceChildren(
+    ...zustand.fragen.map((frageIndex, i) => {
+      const frage = FRAGEN[frageIndex]
+      const reihenfolge = zustand.optionen[i]
+      const gewaehlt = zustand.antworten[i]
+      const korrekt = istRichtig(frage, reihenfolge, gewaehlt)
+
+      const li = document.createElement("li")
+      li.className = korrekt ? "richtig" : "falsch"
+
+      const marker = document.createElement("span")
+      marker.className = "marker"
+      // Zustand nie allein über Farbe — der Text trägt die Aussage mit.
+      marker.textContent = `${korrekt ? "Richtig" : "Falsch"} · Nr. ${frageIndex + 1}`
+
+      const text = document.createElement("span")
+      text.className = "frage"
+      text.textContent = frage.frage
+
+      const antwort = document.createElement("span")
+      antwort.className = "antwort"
+
+      if (gewaehlt === null) {
+        antwort.append("Nicht beantwortet. ")
+      } else if (!korrekt) {
+        antwort.append(`Gewählt: ${frage.antworten[reihenfolge[gewaehlt]]}. `)
+      }
+
+      if (korrekt) {
+        antwort.append(frage.antworten[frage.richtig])
+      } else {
+        const richtigeAntwort = document.createElement("b")
+        richtigeAntwort.textContent = `Richtig: ${frage.antworten[frage.richtig]}`
+        antwort.append(richtigeAntwort)
+      }
+
+      li.append(marker, text, antwort)
+      return li
+    }),
+  )
 }
