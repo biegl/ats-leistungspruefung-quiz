@@ -137,6 +137,12 @@ h1:focus-visible, h2:focus-visible { outline: 2px solid var(--accent); outline-o
 .lede { margin: 0; color: var(--text-quiet); }
 .note { margin: 0; font-size: 0.85rem; color: var(--text-quiet); }
 
+#catalog summary {
+  color: var(--accent); cursor: pointer;
+  min-height: 2.75rem; padding: 0.6rem 0;
+}
+#catalog summary:focus-visible { outline: 3px solid var(--text-strong); outline-offset: 2px; }
+
 .facts { list-style: none; margin: 0.25rem 0 0; padding: 0; display: grid; gap: 0.6rem; }
 .facts li {
   display: grid; grid-template-columns: 3.2rem 1fr; gap: 0.8rem; align-items: baseline;
