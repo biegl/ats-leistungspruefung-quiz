@@ -183,6 +183,7 @@ h1:focus-visible, h2:focus-visible { outline: 2px solid var(--accent); outline-o
 .question-block legend {
   font-family: var(--font-heading); font-weight: 600; font-size: 1.1rem;
   line-height: 1.35; color: var(--text-strong); padding: 0; text-wrap: pretty;
+  margin-bottom: 1.1rem;
 }
 
 .options { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
