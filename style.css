@@ -128,9 +128,20 @@ body {
 .stage {
   flex: 1 1 auto; width: 100%; max-width: 34rem;
   margin: 0 auto; padding: 1.25rem 1rem 2rem;
+  display: flex; flex-direction: column;
 }
-.screen { display: flex; flex-direction: column; gap: 1rem; min-height: 100%; }
+.screen { display: flex; flex-direction: column; gap: 1rem; }
 .screen[hidden] { display: none; }
+/* #screen-question fills the stage (flex, from .stage's column context) but
+   lays out its own children as a grid, not flex: through this indefinite
+   flex:1-in-flex:1 chain, a <fieldset> only distributed the leftover height
+   to its own children when it got that height from a grid 1fr track — not
+   when it came from flex-grow (measured; see layout-report.md).
+   :not([hidden]) so .screen[hidden]{display:none} still wins when swapped out
+   — an #id selector otherwise beats that class rule's specificity. */
+/* 4 tracks, not 5: #question-title is position:absolute (.visually-hidden) so
+   it takes no grid track — only meta, dots, fieldset, button do. */
+#screen-question:not([hidden]) { flex: 1; display: grid; grid-template-rows: auto auto 1fr auto; }
 h1, h2 { font-family: var(--font-heading); letter-spacing: -0.03em; color: var(--text-strong); }
 h1 { font-size: 1.65rem; line-height: 1.15; margin: 0.5rem 0 0; text-wrap: balance; }
 h1:focus-visible, h2:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
@@ -179,12 +190,24 @@ h1:focus-visible, h2:focus-visible { outline: 2px solid var(--accent); outline-o
 .progress i.done { background: var(--accent); }
 .progress i.current { background: var(--accent); transform: scale(1.45); }
 
-.question-block { border: 0; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
-.question-block legend {
-  font-family: var(--font-heading); font-weight: 600; font-size: 1.1rem;
-  line-height: 1.35; color: var(--text-strong); padding: 0; text-wrap: pretty;
-  margin-bottom: 1.1rem;
+.question-block { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.9rem; }
+/* justify-content:center, not margin:auto: margin:auto here resolved to 0px
+   (measured) once .question-block got its height from the grid 1fr track
+   above — this still centers under that same setup, and lets long text wrap
+   normally within the width. */
+.question-text {
+  flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
+  font-family: var(--font-heading); font-weight: 600; font-size: 1.5rem;
+  line-height: 1.4; color: var(--text-strong); padding: 0; text-wrap: pretty;
+  margin: 0;
 }
+
+/* Options and button form one bottom-anchored control block: override .btn's
+   margin-top:auto and tighten the .screen gap (1rem) down to 0.75rem, so the
+   thumb-reachable zone stays compact but the button doesn't crowd the last
+   option. Only #next-btn, not .btn in general — start/result screens keep
+   their bottom-pinned buttons. */
+#next-btn { margin-top: calc(0.75rem - 1rem); }
 
 .options { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
 .options label {
