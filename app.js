@@ -88,6 +88,14 @@ function zeichnen() {
 
   if (name === "frage") zeichneFrage()
   if (name === "ergebnis") zeichneErgebnis()
+
+  // Nur beim tatsächlichen Wechsel fokussieren — sonst reißt jeder Timer-Tick
+  // den Fokus aus den Antwortoptionen.
+  if (name !== zuletztGezeichnet) {
+    zuletztGezeichnet = name
+    const ueberschrift = el.screens[name].querySelector("h1, h2")
+    if (ueberschrift) ueberschrift.focus()
+  }
 }
 
 el.startBtn.addEventListener("click", starten)
@@ -97,6 +105,7 @@ el.neustartBtn.addEventListener("click", starten)
 const WARNSCHWELLE_MS = 60 * 1000
 let warnungAngesagt = false
 let tickerId = null
+let zuletztGezeichnet = null
 
 function tick() {
   if (!zustand || zustand.fertig) {
