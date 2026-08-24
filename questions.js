@@ -1,7 +1,8 @@
 // Question catalog for the "Atemschutz-Leistungsprüfung Stufe I (Bronze)"
 // (breathing-apparatus proficiency test, level I bronze), LFV Tirol, 2021 edition.
-// Every correct answer is a character-exact copy of the directive's answer,
-// including its final period; only markdown emphasis markers were dropped.
+// Every question text and every correct answer is a character-exact copy of
+// the directive, including the answer's final period; only markdown emphasis
+// markers were dropped.
 // The two wrong answers per question were added — the directive contains none.
 // The directive's question number is the array index + 1.
 export const QUESTIONS = [
@@ -27,7 +28,7 @@ export const QUESTIONS = [
   },
   {
     question:
-      "Wie lange kann ein Mensch ohne Sauerstoff leben, ohne Schäden davonzutragen?",
+      "Wie lange kann ein Mensch ohne Sauerstoff (Atmung) leben, ohne Schäden davonzutragen?",
     answers: [
       "Etwa 30 Sekunden.",
       "Etwa 3 Minuten.",
@@ -107,7 +108,7 @@ export const QUESTIONS = [
   },
   {
     question:
-      "Kann auf Atemschutz verzichtet werden, wenn bestimmte physikalische Eigenschaften eines Atemgiftes bekannt sind?",
+      "Kann auf Atemschutz verzichtet werden, wenn bestimmte physikalische Eigenschaften (z. B. brennbar, wasserlöslich) eines Atemgiftes bekannt sind?",
     answers: [
       "Ja, wenn das Atemgift als wasserlöslich und ungefährlich bekannt ist.",
       "Ja, wenn das Atemgift nachweislich nicht brennbar ist und die Konzentration gering bleibt.",
@@ -227,7 +228,7 @@ export const QUESTIONS = [
   },
   {
     question:
-      "Welche Funktion hat der Lungenautomat?",
+      "Welche Funktion hat der LA?",
     answers: [
       "Reinigung der Atemluft von Atemgiften vor dem Einatmen.",
       "Anzeige des verbleibenden Flaschendrucks während des Einsatzes.",
