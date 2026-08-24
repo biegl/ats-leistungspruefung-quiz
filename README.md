@@ -45,7 +45,7 @@ Quellcode, Bezeichner und Kommentare sind englisch; alle Inhalte und die gesamte
 ## Quelle und Vorbehalt
 
 Die Fragen stammen aus der Durchführungsrichtlinie „Atemschutz Leistungsprüfung
-Stufe I – Bronze" des Landes-Feuerwehrverbandes Tirol, Ausgabe 2021.
+Stufe I – Bronze“ des Landes-Feuerwehrverbandes Tirol, Ausgabe 2021.
 
 Die Richtlinie enthält nur die richtigen Antworten. **Die jeweils zwei
 Falschantworten wurden ergänzt und sind nicht Teil der amtlichen Unterlage.**

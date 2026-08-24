@@ -87,9 +87,9 @@ function start() {
     current: 0,
     endsAt: Date.now() + DURATION_MS,
     finished: false,
+    warningAnnounced: false,
   }
   save()
-  warningAnnounced = false
   lastRendered = null
   render()
 }
@@ -133,7 +133,6 @@ el.nextBtn.addEventListener("click", next)
 el.restartBtn.addEventListener("click", start)
 
 const WARN_THRESHOLD_MS = 60 * 1000
-let warningAnnounced = false
 let tickerId = null
 let lastRendered = null
 
@@ -149,9 +148,11 @@ function tick() {
   const warn = remaining <= WARN_THRESHOLD_MS
   el.timer.classList.toggle("warn", warn)
 
-  // Announce once instead of reading it out every second.
-  if (warn && !warningAnnounced) {
-    warningAnnounced = true
+  // Announce once instead of reading it out every second. Persisted on
+  // state so a reload after the warning fired doesn't repeat it.
+  if (warn && !state.warningAnnounced) {
+    state.warningAnnounced = true
+    save()
     el.announce.textContent = "Noch eine Minute Bearbeitungszeit."
   }
 
@@ -178,9 +179,11 @@ function stopTicker() {
 }
 
 // Background tabs throttle setInterval. Catch up immediately on return
-// instead of showing a stale time until the next tick.
+// instead of showing a stale time until the next tick — including the case
+// where time already ran out in the background; tick() is safe to call
+// regardless of the current screen.
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && currentScreen() === "question") tick()
+  if (!document.hidden) tick()
 })
 
 function renderQuestion() {
