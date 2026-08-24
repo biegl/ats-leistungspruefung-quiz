@@ -90,6 +90,7 @@ function start() {
   }
   save()
   warningAnnounced = false
+  lastRendered = null
   render()
 }
 
@@ -116,10 +117,12 @@ function render() {
   if (name === "question") renderQuestion()
   if (name === "result") renderResult()
 
-  // Only focus on an actual screen change — otherwise every timer tick would
-  // rip focus out of the answer options.
-  if (name !== lastRendered) {
-    lastRendered = name
+  // Move focus only when the screen or the question actually changed, so a
+  // re-render of the same question (were render() ever called again for it)
+  // doesn't pull focus away from where the user is — onto an option, say.
+  const key = `${name}:${state?.current}`
+  if (key !== lastRendered) {
+    lastRendered = key
     const heading = el.screens[name].querySelector("h1, h2")
     if (heading) heading.focus()
   }
