@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ATS">
+  <rect width="512" height="512" fill="#C4302A"/>
+  <!-- y = 256 + capHeight/2 (cap height is roughly 0.72 of the font size).
+       Explicit alphabetic baseline instead of dominant-baseline: SVG renderers
+       disagree on the latter, and the icon must look the same everywhere. -->
+  <text x="256" y="309" fill="#FFFFFF" text-anchor="middle"
+        font-family="Archivo, Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="148" font-weight="700">ATS</text>
+</svg>
