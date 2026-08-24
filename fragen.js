@@ -1,5 +1,9 @@
 // Fragenkatalog der Atemschutz-Leistungsprüfung Stufe I (Bronze), LFV Tirol, Ausgabe 2021.
-// Die richtigen Antworten stammen wörtlich aus der Richtlinie.
+// Die richtigen Antworten sind inhaltlich aus der Richtlinie übernommen, meist wörtlich.
+// Ausnahmen: Bei den Ja/Nein-Fragen 20, 24 und 29 sagt die Richtlinie nur "Nein.", die
+// Begründung dahinter ist ergänzt, damit die Frage nicht durch bloßes Raten trivial wird.
+// Frage 16 ist gestrafft, ohne Fachinhalt zu verlieren (CO-Bezug und beide Vol.-%-Werte
+// bleiben erhalten).
 // Die jeweils zwei Falschantworten sind ergänzt — die Richtlinie enthält keine.
 // Die Nummer der Richtlinie ist der Array-Index + 1.
 
@@ -70,11 +74,7 @@ export const FRAGEN = [
   },
   {
     frage: "Welche Folgen ergeben sich aus der Störung der Atmung?",
-    antworten: [
-      "Lebensgefahr",
-      "Vorübergehende Kopfschmerzen ohne bleibende Folgen",
-      "Eine kurzzeitig verminderte Leistungsfähigkeit",
-    ],
+    antworten: ["Lebensgefahr", "Nur harmlose Kopfschmerzen", "Nur kurzzeitig verminderte Leistung"],
     richtig: 0,
   },
   {
@@ -90,8 +90,8 @@ export const FRAGEN = [
     frage:
       "Kann auf Atemschutz verzichtet werden, wenn bestimmte physikalische Eigenschaften eines Atemgiftes bekannt sind?",
     antworten: [
-      "Ja, wenn das Atemgift als wasserlöslich bekannt ist",
-      "Ja, wenn das Atemgift nachweislich nicht brennbar ist",
+      "Ja, wenn das Atemgift als wasserlöslich und ungefährlich bekannt ist",
+      "Ja, wenn das Atemgift nachweislich nicht brennbar ist und die Konzentration gering bleibt",
       "Nein, aufgrund der physikalischen Eigenschaften kann niemals darauf verzichtet werden",
     ],
     richtig: 2,
@@ -100,8 +100,8 @@ export const FRAGEN = [
     frage: "Können feste Stoffe Atemgifte sein?",
     antworten: [
       "Ja, zum Beispiel in Form von Staub",
-      "Nein, Atemgifte treten ausschließlich in gasförmigem Zustand auf",
-      "Nein, feste Stoffe werden von jeder Atemschutzmaske zurückgehalten",
+      "Nein, nur Gase sind Atemgifte",
+      "Nein, jede Maske hält feste Stoffe zurück",
     ],
     richtig: 0,
   },
@@ -135,9 +135,9 @@ export const FRAGEN = [
   {
     frage: "Wo darf man Filtergeräte nicht verwenden?",
     antworten: [
-      "Nur bei Sauerstoffmangel, in allen übrigen Lagen sind sie zulässig",
-      "Nur bei Bränden im Freien, in geschlossenen Räumen sind sie unbedenklich",
-      "Bei Bränden in geschlossenen Räumen, bei Sauerstoffmangel und wenn die Atemgifte die Filterwirkung überschreiten",
+      "Nur bei akutem Sauerstoffmangel im gesamten Einsatzraum sind Filtergeräte grundsätzlich verboten, in allen übrigen Einsatzlagen bleiben sie uneingeschränkt zulässig",
+      "Nur bei Bränden im Freien besteht ein generelles Verwendungsverbot für Filtergeräte, in geschlossenen Räumen gelten sie hingegen als unbedenklich",
+      "Bei Bränden in geschlossenen Räumen (CO), bei Sauerstoffmangel unter 17 Vol.-% (bei CO-Filtern unter 19 Vol.-%) sowie bei Überschreiten der Filterwirkung",
     ],
     richtig: 2,
   },
@@ -222,18 +222,14 @@ export const FRAGEN = [
     frage: "Worin besteht der Unterschied zwischen Normal- und Überdruckgeräten?",
     antworten: [
       "Im geringen Überdruck in der Maske durch federbelastetes Ausatemventil und geänderten Lungenautomaten",
-      "Im höheren Fülldruck der Atemluftflaschen bei Überdruckgeräten",
-      "In der Anzahl der Atemluftflaschen am Pressluftatmer",
+      "Im deutlich höheren Fülldruck der Atemluftflaschen bei modernen Überdruckgeräten gegenüber Normaldruckgeräten",
+      "In der größeren Anzahl der mitgeführten Atemluftflaschen am Pressluftatmer bei Überdruckausführung",
     ],
     richtig: 0,
   },
   {
     frage: "Schützt ein Atemfilter gegen höhere Konzentrationen von Atemgiften?",
-    antworten: [
-      "Ja, sofern ein Kombinationsfilter verwendet wird",
-      "Grundsätzlich nein",
-      "Ja, bei ausreichend kurzer Einsatzdauer",
-    ],
+    antworten: ["Ja, mit Kombinationsfilter", "Grundsätzlich nein", "Ja, bei kurzer Einsatzdauer"],
     richtig: 1,
   },
   {
