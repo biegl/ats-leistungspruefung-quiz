@@ -32,10 +32,36 @@ const el = {
 
 let state = load()
 
+/**
+ * Guards the one place a stored round enters the app. Anything that parses
+ * but doesn't match the current shape (old field names, a future field
+ * missing, a hand-edited value) is discarded here instead of surfacing as an
+ * exception deep in a render function.
+ */
+function isValidState(s) {
+  return (
+    !!s &&
+    typeof s === "object" &&
+    Array.isArray(s.questions) &&
+    s.questions.every((q) => Number.isInteger(q) && q >= 0 && q < QUESTIONS.length) &&
+    Array.isArray(s.options) &&
+    s.options.length === s.questions.length &&
+    s.options.every((o) => Array.isArray(o)) &&
+    Array.isArray(s.answers) &&
+    s.answers.length === s.questions.length &&
+    Number.isInteger(s.current) &&
+    s.current >= 0 &&
+    s.current < s.questions.length &&
+    Number.isFinite(s.endsAt)
+  )
+}
+
 function load() {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : null
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    return isValidState(parsed) ? parsed : null
   } catch {
     // Private mode or blocked storage: the round then won't survive a
     // reload, but the quiz keeps working.
@@ -153,8 +179,6 @@ function stopTicker() {
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && currentScreen() === "question") tick()
 })
-
-render()
 
 function renderQuestion() {
   const i = state.current
@@ -301,3 +325,9 @@ el.resetYes.addEventListener("click", () => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !el.resetDialog.hidden) closeResetDialog()
 })
+
+// Everything above is a declaration or a listener registration. Calling
+// render() last means a future render-time exception still leaves reset and
+// escape working, instead of aborting module evaluation before they're wired
+// up.
+render()
