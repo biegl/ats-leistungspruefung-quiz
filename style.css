@@ -89,9 +89,13 @@ body {
   position: sticky; top: 0; z-index: 10;
 }
 .header-brand {
+  display: flex; align-items: center; gap: 0.5rem;
   font-family: var(--font-heading); font-weight: 600; font-size: 0.7rem;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-quiet);
 }
+/* The mark carries the "ATS" of the wordmark; its alt text keeps the header
+   reading "ATS Bronze" for screen readers. */
+.brand-mark { display: block; width: 1.5rem; height: 1.5rem; border-radius: 5px; }
 .header-timer {
   margin-left: auto;
   font-family: var(--font-mono); font-variant-numeric: tabular-nums;
