@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Atemschutz-Leistungsprüfung Bronze — Übungsquiz</title>
 <meta name="description" content="Übungsquiz zur theoretischen Prüfung der Atemschutz-Leistungsprüfung Stufe I (Bronze).">
+<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -34,20 +35,28 @@
 <main class="stage">
 
   <section class="screen" id="screen-start">
-    <h1 tabindex="-1">Theoretische Prüfung</h1>
-    <p class="lede">Station 1 der Atemschutz-Leistungsprüfung, Stufe I Bronze.</p>
-    <ul class="facts">
-      <li><b>10</b><span>Fragen, zufällig aus 30 gezogen</span></li>
-      <li><b>10</b><span>Minuten Bearbeitungszeit</span></li>
-      <li><b>6</b><span>richtige Antworten zum Bestehen</span></li>
-    </ul>
-    <p class="note">Es kann nicht zurückgeblättert werden. Läuft die Zeit ab, wird
+    <h1 tabindex="-1">Atemschutz-Leistungsprüfung</h1>
+    <p class="lede">Stufe I Bronze — Übungshilfe zur theoretischen Prüfung und zum
+      Ablauf der fünf Stationen.</p>
+    <!-- The three buttons share one wrapper: .btn has margin-top:auto to pin
+         itself to the bottom of the stage, and three of those in a row would
+         each get their own share of the free space. -->
+    <nav class="menu">
+      <button class="btn" id="start-btn" type="button">
+        <b>Quiz starten</b>
+        <span>10 Fragen aus 30 · 10 Minuten · 6 richtige zum Bestehen</span>
+      </button>
+      <a class="btn btn--quiet" href="fragenkatalog.html">
+        <b>Fragenkatalog</b>
+        <span>Alle 30 Fragen mit der richtigen Antwort</span>
+      </a>
+      <a class="btn btn--quiet" href="stationen.html">
+        <b>Stationen 1–5</b>
+        <span>Rollen, Meldungen an den Hauptbewerter, Punkteabzug</span>
+      </a>
+    </nav>
+    <p class="note">Im Quiz kann nicht zurückgeblättert werden. Läuft die Zeit ab, wird
       automatisch ausgewertet.</p>
-    <details id="catalog">
-      <summary>Alle 30 Fragen mit Antworten anzeigen</summary>
-      <ul class="breakdown" id="catalog-list"></ul>
-    </details>
-    <button class="btn" id="start-btn" type="button">Quiz starten</button>
   </section>
 
   <section class="screen" id="screen-question" hidden>

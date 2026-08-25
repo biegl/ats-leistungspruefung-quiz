@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fragenkatalog — Atemschutz-Leistungsprüfung Bronze</title>
+<meta name="description" content="Alle 30 Fragen der theoretischen Prüfung mit der richtigen Antwort.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#C4302A">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Same arrangement as the quiz header: brand left, control right. Installed
+     in standalone mode there is no browser navigation, so this link is the only
+     way back. -->
+<header class="header">
+  <span class="header-brand">
+    <img class="brand-mark" src="icon.svg" alt="ATS" width="24" height="24">
+    Bronze
+  </span>
+  <a class="header-back" href="./">Zurück</a>
+</header>
+
+<main class="stage">
+  <h1 tabindex="-1">Fragenkatalog</h1>
+  <p class="lede">Alle 30 Fragen der theoretischen Prüfung mit der richtigen Antwort.
+    Im Quiz werden daraus 10 gezogen.</p>
+  <ul class="breakdown" id="catalog-list"></ul>
+</main>
+
+<footer class="footer">
+  <p>Fragen aus der Durchführungsrichtlinie „Atemschutz Leistungsprüfung Stufe I – Bronze“,
+     Landes-Feuerwehrverband Tirol, Ausgabe 2021. Übungshilfe ohne amtlichen Charakter.</p>
+</footer>
+
+<script type="module" src="catalog.js"></script>
+</body>
+</html>

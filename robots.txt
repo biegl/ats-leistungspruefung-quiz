@@ -1,0 +1,10 @@
+# Private Übungshilfe, nicht für Suchmaschinen.
+#
+# Achtung: Als GitHub-Pages-Projektseite liegt diese Datei unter
+# /ats-leistungspruefung-quiz/robots.txt und wird von Crawlern nicht gelesen —
+# sie holen ausschließlich https://biegl.github.io/robots.txt, und das gehört
+# zum Repository biegl.github.io. Wirksam ist deshalb das
+# <meta name="robots" content="noindex, nofollow"> in jeder Seite.
+# Diese Datei greift erst bei einer eigenen Domain.
+User-agent: *
+Disallow: /

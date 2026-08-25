@@ -132,3 +132,51 @@ test("formatTime produces MM:SS with a leading zero and rounds up", () => {
   assert.equal(formatTime(0), "00:00")
   assert.equal(formatTime(59400), "01:00") // a partial second counts in full
 })
+
+import { readFileSync } from "node:fs"
+
+/**
+ * Every getElementById in a page module must find its element. These lookups
+ * run at module evaluation, so a single stale id throws before the app is
+ * wired up and takes the whole page down — not just the one feature.
+ */
+const PAGES = [
+  ["app.js", "index.html"],
+  ["catalog.js", "fragenkatalog.html"],
+]
+
+for (const [module, page] of PAGES) {
+  test(`every id ${module} looks up exists in ${page}`, () => {
+    const source = readFileSync(module, "utf8")
+    const markup = readFileSync(page, "utf8")
+    const ids = [...source.matchAll(/getElementById\("([^"]+)"\)/g)].map((m) => m[1])
+
+    assert.ok(ids.length > 0, `no getElementById calls found in ${module}`)
+    for (const id of ids) {
+      assert.ok(markup.includes(`id="${id}"`), `${page} has no element with id="${id}"`)
+    }
+  })
+}
+
+test("the start menu links to both reference pages", () => {
+  const markup = readFileSync("index.html", "utf8")
+  assert.match(markup, /href="fragenkatalog\.html"/)
+  assert.match(markup, /href="stationen\.html"/)
+})
+
+test("both reference pages offer a way back into the app", () => {
+  for (const page of ["fragenkatalog.html", "stationen.html"]) {
+    const markup = readFileSync(page, "utf8")
+    assert.match(markup, /class="header-back" href="\.\/"/, `${page} has no back link`)
+  }
+})
+
+test("every page asks not to be indexed", () => {
+  // The meta tag is what actually works: as a GitHub Pages project page the
+  // site lives in a subdirectory, and robots.txt is only read at the domain
+  // root — which belongs to a different repository.
+  for (const page of ["index.html", "fragenkatalog.html", "stationen.html"]) {
+    const markup = readFileSync(page, "utf8")
+    assert.match(markup, /<meta name="robots" content="noindex, nofollow">/, `${page} may be indexed`)
+  }
+})

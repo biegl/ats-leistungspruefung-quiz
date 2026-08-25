@@ -28,7 +28,6 @@ const el = {
   score: document.getElementById("result-score"),
   list: document.getElementById("result-list"),
   restartBtn: document.getElementById("restart-btn"),
-  catalogList: document.getElementById("catalog-list"),
 }
 
 let state = load()
@@ -344,29 +343,6 @@ el.resetYes.addEventListener("click", () => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !el.resetDialog.hidden) closeResetDialog()
 })
-
-// Static lookup view on the start screen: filled once from QUESTIONS, no
-// screen state involved.
-el.catalogList.replaceChildren(
-  ...QUESTIONS.map((q, i) => {
-    const li = document.createElement("li")
-
-    const marker = document.createElement("span")
-    marker.className = "marker"
-    marker.textContent = `Nr. ${i + 1}`
-
-    const question = document.createElement("span")
-    question.className = "question"
-    question.textContent = q.question
-
-    const answer = document.createElement("span")
-    answer.className = "answer"
-    answer.textContent = q.answers[q.correct]
-
-    li.append(marker, question, answer)
-    return li
-  }),
-)
 
 // Everything above is a declaration or a listener registration. Calling
 // render() last means a future render-time exception still leaves reset and
