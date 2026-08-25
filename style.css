@@ -108,6 +108,7 @@ body {
   color: var(--warn-text); background: var(--warn-bg); border-color: var(--warn-line);
 }
 .header-timer[hidden] { display: none; }
+.header-reset[hidden] { display: none; }
 .header-timer[hidden] + .header-reset { margin-left: auto; }
 
 .header-reset {

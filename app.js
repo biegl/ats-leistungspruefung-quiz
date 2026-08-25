@@ -111,6 +111,8 @@ function render() {
     node.hidden = key !== name
   }
   el.timer.hidden = name !== "question"
+  // Nothing to abort on the start screen.
+  el.reset.hidden = name === "start"
 
   if (name === "question") startTicker()
   else stopTicker()
@@ -323,9 +325,19 @@ function closeResetDialog() {
 
 el.reset.addEventListener("click", openResetDialog)
 el.resetNo.addEventListener("click", closeResetDialog)
+// Aborting discards the round and returns to the start screen; starting a new
+// one is a deliberate second step from there. The element ids still read
+// "reset" — they address the same control, only its meaning changed.
+function abortRound() {
+  state = null
+  save()
+  lastRendered = null
+  render()
+}
+
 el.resetYes.addEventListener("click", () => {
   el.resetDialog.hidden = true
-  start()
+  abortRound()
 })
 
 // Escape closes the confirmation dialog without discarding the round.

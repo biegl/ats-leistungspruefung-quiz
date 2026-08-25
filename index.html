@@ -19,15 +19,15 @@
     Bronze
   </span>
   <span class="header-timer" id="timer" hidden>10:00</span>
-  <button class="header-reset" id="reset" type="button">Neu starten</button>
+  <button class="header-reset" id="reset" type="button" hidden>Abbrechen</button>
 </header>
 
 <div class="reset-dialog" id="reset-dialog" role="alertdialog"
      aria-labelledby="reset-dialog-title" hidden>
-  <p id="reset-dialog-title">Quiz wirklich neu starten? Fortschritt und Zeit gehen verloren.</p>
+  <p id="reset-dialog-title">Quiz wirklich abbrechen? Der Durchgang und die Zeit gehen verloren.</p>
   <div class="reset-dialog-actions">
-    <button type="button" id="reset-yes" class="btn btn--small">Ja, neu starten</button>
-    <button type="button" id="reset-no" class="btn btn--small btn--quiet">Abbrechen</button>
+    <button type="button" id="reset-yes" class="btn btn--small">Ja, abbrechen</button>
+    <button type="button" id="reset-no" class="btn btn--small btn--quiet">Nein, weiter</button>
   </div>
 </div>
 
