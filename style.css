@@ -84,6 +84,11 @@ body {
 .header {
   display: flex; align-items: center; gap: 0.6rem;
   padding: 0.85rem 1rem;
+  /* Constant height across all three screens. The tallest child is the abort
+     button at its 44px touch-target minimum; the start screen hides it and
+     would otherwise sit 20px shorter and make the page jump on start.
+     2.75rem button + 1.7rem padding + 1px border, border-box. */
+  min-height: 4.5rem;
   background: var(--header-bg);
   border-bottom: 1px solid var(--line);
   position: sticky; top: 0; z-index: 10;
