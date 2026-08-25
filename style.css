@@ -147,6 +147,11 @@ body {
 /* 4 tracks, not 5: #question-title is position:absolute (.visually-hidden) so
    it takes no grid track — only meta, dots, fieldset, button do. */
 #screen-question:not([hidden]) { flex: 1; display: grid; grid-template-rows: auto auto 1fr auto; }
+/* Same idea for the start screen, but plain flex is enough here: filling the
+   stage gives .btn's margin-top:auto the free space it needs to pin "Quiz
+   starten" to the bottom. Expanding the catalogue just grows the screen past
+   the viewport and the page scrolls, as it should. */
+#screen-start:not([hidden]) { flex: 1; }
 h1, h2 { font-family: var(--font-heading); letter-spacing: -0.03em; color: var(--text-strong); }
 h1 { font-size: 1.65rem; line-height: 1.15; margin: 0.5rem 0 0; text-wrap: balance; }
 h1:focus-visible, h2:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
